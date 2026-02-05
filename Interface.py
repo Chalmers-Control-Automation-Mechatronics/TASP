@@ -24,16 +24,16 @@ def UpdateJson(Solver,year):
 
 if __name__ == "__main__":
 
-    Solvers = ['SAT']# ['GUROBI','SCIP','SAT','Z3']
-    Years = [2026]#[2022,2023,2024,2025,2026]
-
-    for solver in Solvers:
-        for year in Years:
-            UpdateJson(solver,year)
-
-    # Solvers = ['GUROBI']  # ['GUROBI','SCIP','SAT','Z3']
-    # Years = [2022,2023,2024,2025,2026]
+    # Solvers = ['SAT']# ['GUROBI','SCIP','SAT','Z3']
+    # Years = [2026]#[2022,2023,2024,2025,2026]
     #
     # for solver in Solvers:
     #     for year in Years:
-    #         UpdateJson(solver, year)
+    #         UpdateJson(solver,year)
+
+    Solvers = ['GUROBI']  # ['GUROBI','SCIP','SAT','Z3']
+    Years = [2026]
+
+    for solver in Solvers:
+        for year in Years:
+            UpdateJson(solver, year)

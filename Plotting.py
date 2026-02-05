@@ -7,7 +7,7 @@ import numpy as np
 def read_year_csv(year: str, filename: str = "data.csv", sep: str = ";"):
     script_dir = Path(__file__).resolve().parent
     base_dir = script_dir.parent
-    file_path = base_dir / "TeacherAssistantProblem/Input_Output" / year / filename
+    file_path = base_dir / "TASP/Input_Output" / year / filename
 
     if file_path.exists():
         return pd.read_csv(file_path, sep=sep)
@@ -26,7 +26,7 @@ def read_year_excel(
     """
     script_dir = Path(__file__).resolve().parent
     base_dir = script_dir.parent
-    file_path = base_dir / "TeacherAssistantProblem/Input_Output" /year / filename
+    file_path = base_dir / "TASP/Input_Output" /year / filename
 
     if not file_path.exists():
         raise FileNotFoundError(f"File not found: {file_path}")
@@ -185,7 +185,7 @@ def plot_course_histogram(solver: str, year: int, sep=",", save=True):
 if __name__ == "__main__":
 
     Solvers = ['GUROBI','SCIP','SAT','Z3']
-    Years = [2022]  # [2022,2023,2024,2025,2026]
+    Years = [2022,2023,2024,2025,2026]
 
     for solver in Solvers:
         for year in Years:
