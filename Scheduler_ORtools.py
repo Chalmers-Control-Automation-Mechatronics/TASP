@@ -10,7 +10,7 @@ from time import time as tm
 # -----------------------------
 def preprocess_data(year):
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    excel_path = os.path.join(script_dir, f'FinalRuns/{year}/{year}.xlsx')  # change name of Excel document for input
+    excel_path = os.path.join(script_dir, f'Input_Output/{year}/{year}.xlsx')  # change name of Excel document for input
     sheets = pd.read_excel(excel_path, sheet_name=None)
 
     df_TAs = sheets['TAs']
@@ -413,7 +413,7 @@ def create_model(
 def save_result(df_TAs, df_ass, df_c, happ, df_TA_req, df_ta_task,year,solver):
 
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    excel_path = os.path.join(script_dir, f'FinalRuns/{year}/{year+1}_{solver}.xlsx')  # Change name of Excel document for output
+    excel_path = os.path.join(script_dir, f'Input_Output/{year}/{year+1}_{solver}.xlsx')  # Change name of Excel document for output
 
     df_ass.index = df_TA_req.iloc[:, 0]
     df_ta_task.index = df_TA_req.iloc[:, 0]
