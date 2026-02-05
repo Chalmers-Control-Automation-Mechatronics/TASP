@@ -181,15 +181,112 @@ def plot_course_histogram(solver: str, year: int, sep=",", save=True):
 
     plt.show()
 
+
+def plot_num_courses_collected(solvers, years, include_manual=True):
+
+    # ---- collect data ----
+    def aggregate_course_data(assigned_courses, new_courses):
+
+        assigned_c = dict(assigned_courses.value_counts())
+        new_c = dict(new_courses.value_counts())
+
+        return assigned_c, new_c
+
+    data = dict()
+
+    # manual
+    data['Manual'] = []
+    for i, year in enumerate(years):
+
+        df_manual = read_year_csv(str(year), f"{year}(num_courses).csv", sep=",")
+        assigned_c, new_c = aggregate_course_data(df_manual['num_courses'], df_manual['new_courses'])
+
+        data['Manual'].append({
+            'assigned': assigned_c,
+            'new': new_c})
+
+    # solvers
+    for solver in solvers:
+        data[solver] = []
+        for year in years:
+            df_solver = read_year_excel(str(year), f"{year + 1}_{solver}.xlsx", sheet_name="happiness")
+            assigned_c, new_c = aggregate_course_data(df_solver['Taught courses'], df_solver['Switched Courses'])
+            data[solver].append({
+                'assigned': assigned_c,
+                'new': new_c})
+
+
+    # ---- create plot ----
+    bar_width = 0.13
+    spacing = 0.01
+    colors = plt.cm.get_cmap('Paired').colors
+
+    methods = solvers + (['Manual'] if include_manual else [])
+    method_colors = {m: colors[k % len(colors)] for k, m in enumerate(methods)}
+
+    for i, year in enumerate(years):
+        fig, axs = plt.subplots(2, 1, figsize=(7, 7), sharey=True, layout='constrained')
+
+        metrics = ['assigned', 'new']
+        x_labels = ['Number of Assigned Courses', 'Number of Switched Courses']
+
+        for ax_idx, metric in enumerate(metrics):
+            ax = axs[ax_idx]
+
+            all_keys = set()
+            for method in methods:
+                all_keys.update(data[method][i][metric].keys())
+            sorted_keys = sorted(list(all_keys))
+            x_indices = np.arange(len(sorted_keys))
+
+            for j, method in enumerate(methods):
+                method_data = data[method][i][metric]
+
+                heights = [method_data.get(k, 0) for k in sorted_keys]
+                offset = (j - len(methods) / 2 + 0.5) * (bar_width + spacing)
+
+                ax.bar(x_indices + offset, heights,
+                       width=bar_width,
+                       label=method,
+                       color=method_colors[method],
+                       alpha=1)
+
+            # formatting
+            ax.set_xlabel(x_labels[ax_idx], fontsize=14)
+            ax.set_xticks(x_indices)
+            ax.set_xticklabels(sorted_keys)
+            ax.tick_params(axis='both', which='major', labelsize=14)
+            ax.grid(axis="y", linestyle="--", alpha=0.6)
+            ax.spines['top'].set_visible(False)
+            ax.spines['right'].set_visible(False)
+            # ax.spines['bottom'].set_visible(False)
+            ax.spines['left'].set_visible(False)
+
+            if ax_idx == 0:
+                ax.legend(loc='upper left', fontsize=14, title_fontsize=14)
+
+
+        # Save PDF
+        out = Path(__file__).resolve().parent / f"Plots/AssignedAndNewCourses/Num_Courses_Collected_{year}.pdf"
+        plt.savefig(out, format="pdf")
+        print(f"Saved: {out}")
+        plt.show()
+
+        pass
+
+
 # Run script
 if __name__ == "__main__":
 
     Solvers = ['GUROBI','SCIP','SAT','Z3']
-    Years = [2022,2023,2024,2025,2026]
+    Years = [2022, 2023, 2024, 2025, 2026]
 
+    plot_num_courses_collected(Solvers, Years)
+
+    """
     for solver in Solvers:
         for year in Years:
             # plot_course_histogram(solver,year, sep=",", save=True)
             plot_assigned_vs_target(solver,year, sep_solver=";", sep_manual=",")
             # compute_rmSE_assigned_vs_target(solver,year, sep_solver=";", sep_manual=",")
-
+    """
