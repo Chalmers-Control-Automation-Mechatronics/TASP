@@ -225,7 +225,7 @@ def plot_a_course_histogram(data, ax, year, metric, solvers=None, x_label=None, 
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
     # ax.spines['bottom'].set_visible(False)
-    # ax.spines['left'].set_visible(False)
+    ax.spines['left'].set_visible(False)
 
     if legend:
         ax.legend(loc='upper right', fontsize=11, title_fontsize=14)
@@ -265,7 +265,7 @@ def plot_course_histogram_collected():
 
     # fig.suptitle('Number of Switched Courses by Year', fontsize=16)
     fig.supylabel('Number of TAs', fontsize=14)
-    fig.supxlabel('Number of Switched Courses', fontsize=14)
+    fig.supxlabel('Number of New Courses', fontsize=14)
     plt.subplots_adjust(wspace=0.1, hspace=0.3)
     save_path = Path(__file__).resolve().parent / f"Plots/AssignedAndNewCourses/Num_Switched_Courses_Collected_2023-2026.pdf"
     plt.savefig(save_path, format="pdf")
@@ -280,7 +280,7 @@ def plot_double_histogram(year, solvers=None):
     plot_a_course_histogram(data, axs[0], year=year, metric='assigned', solvers=solvers,
                             x_label=f'Number of Assigned Courses', y_label='Number of TAs', legend=True)
     plot_a_course_histogram(data, axs[1], year=year, metric='new', solvers=solvers,
-                            x_label=f'Number of Switched Courses', y_label='Number of TAs', legend=False)
+                            x_label=f'Number of New Courses', y_label='Number of TAs', legend=False)
     plt.subplots_adjust(hspace=0.4)
     save_path = Path(__file__).resolve().parent / f"Plots/AssignedAndNewCourses/Num_Courses_{year}.pdf"
     plt.savefig(save_path, format="pdf")
