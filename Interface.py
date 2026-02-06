@@ -1,6 +1,6 @@
 import json
-from Scheduler_ORtools import main as mainOR
-from SchedulerZ3_3 import main as mainZ3
+from MILP_formulation import main as mainOR
+from SMT_formulation import main as mainZ3
 from Plotting import compute_rmSE_assigned_vs_target
 
 def UpdateJson(Solver,year):

@@ -34,31 +34,37 @@ def read_year_excel(
     return pd.read_excel(file_path, sheet_name=sheet_name)
 
 
-def plot_assigned_vs_target(solver: str, year: int, sep_solver=";", sep_manual=",", save: bool = True):
+def plot_assigned_vs_target(solver: list, year: int, sep_solver=";", sep_manual=",", save: bool = True):
     """Plot Assigned vs Target for both Solver and Manual datasets for a given year."""
     
     # Generate filenames dynamically
     manual_filename = f"OutputData(plot_manual_{year}).csv"
 
 
+
     # Read Solver and Manual datasets
-    df_solver = read_year_excel(str(year), f"{year+1}_{solver}.xlsx", sheet_name="TAs")
+    df_solver = {name:read_year_excel(str(year), f"{year+1}_{name}.xlsx", sheet_name="TAs") for name in solver}
     df_manual = read_year_csv(str(year), manual_filename, sep=sep_manual)
 
     # Scatter plots
-    plt.scatter(df_solver["Target"], df_solver["Assigned"], label="Solver", alpha=0.7)
+    for name in solver:
+        plt.scatter(df_solver[name]["Target"], df_solver[name]["Assigned"], label=f"{name}", alpha=0.7)
     plt.scatter(df_manual["Target"], df_manual["Assigned"], label="Manually", alpha=0.7)
 
     # reference line
-    x_min = min(df_solver["Target"].min(), df_manual["Target"].min())
-    x_max = max(df_solver["Target"].max(), df_manual["Target"].max())
+    min_buffer = [df_solver[name]["Target"].min() for name in solver]
+    min_buffer.append(df_manual["Target"].min())
+    max_buffer = [df_solver[name]["Target"].max() for name in solver]
+    max_buffer.append(df_manual["Target"].max())
+    x_min = min(min_buffer)
+    x_max = max(max_buffer)
     x = np.linspace(x_min, x_max, 100)
     plt.plot(x, x, color="red", linestyle="--")#, label="y=x")
 
     # Labels, title, legend
     plt.xlabel("Target")
     plt.ylabel("Assigned")
-    plt.title(f"Assigned vs Target {year}-{solver}")
+    plt.title(f"Assigned vs Target {year}-{'-'.join(solver)}")
     plt.legend()
     plt.grid(True)
     plt.tight_layout()
@@ -66,7 +72,7 @@ def plot_assigned_vs_target(solver: str, year: int, sep_solver=";", sep_manual="
     # Save automatically as PDF with the year in filename
     if save:
         script_dir = Path(__file__).resolve().parent
-        filename_pdf = script_dir / f"Plots/Assigned_vs_Target_{year}_{solver}.pdf"
+        filename_pdf = script_dir / f"Plots/Assigned_vs_Target_{year}_{'-'.join(solver)}.pdf"
         plt.savefig(filename_pdf, format="pdf")
         print(f"Plot saved as {filename_pdf}")
 
@@ -278,8 +284,16 @@ def plot_num_courses_collected(solvers, years, include_manual=True):
 # Run script
 if __name__ == "__main__":
 
+    Solvers = ['GUROBI','SAT','SCIP','Z3']#'SCIP','SAT','Z3']
+    Years = [2022]#,2023,2024,2025,2026]
     Solvers = ['GUROBI','SCIP','SAT','Z3']
     Years = [2022, 2023, 2024, 2025, 2026]
+
+    # for solver in Solvers:
+    for year in Years:
+        # plot_course_histogram(solver,year, sep=",", save=True)
+        plot_assigned_vs_target(Solvers,year, sep_solver=";", sep_manual=",")
+        # compute_rmSE_assigned_vs_target(solver,year, sep_solver=";", sep_manual=",")
 
     plot_num_courses_collected(Solvers, Years)
 
