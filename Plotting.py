@@ -199,7 +199,7 @@ def plot_num_courses_collected(solvers, years, include_manual=True):
     for i, year in enumerate(years):
 
         df_manual = read_year_csv(str(year), f"{year}(num_courses).csv", sep=",")
-        assigned_c, new_c = aggregate_course_data(df_manual['num_courses'], df_manual['new_courses'])
+        assigned_c, new_c = aggregate_course_data(df_manual['num_man'], df_manual['new_man'])
 
         data['Manual'].append({
             'assigned': assigned_c,
